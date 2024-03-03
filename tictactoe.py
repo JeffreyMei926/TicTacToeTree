@@ -1,4 +1,6 @@
 
+import numpy as np
+
 
 def print_board(board):
     for row in board:
@@ -26,7 +28,7 @@ def is_board_full(board):
     return True
 
 def tic_tac_toe():
-    board = [[' ' for _ in range(3)] for _ in range(3)]
+    board = np.array([[''] * 3] * 3)
     current_player = 'X'
 
     while True:
@@ -35,7 +37,7 @@ def tic_tac_toe():
         row = int(input(f"Player {current_player}, enter row (0, 1, or 2): "))
         col = int(input("Enter column (0, 1, or 2): "))
 
-        if board[row][col] == ' ':
+        if board[row][col] == '':
             board[row][col] = current_player
 
             if check_winner(board):
@@ -54,6 +56,8 @@ def tic_tac_toe():
 
 # Monte Carlo Search Tree
 # - depth first search 
+
+# Search for 
 
 
 
