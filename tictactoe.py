@@ -1,14 +1,22 @@
 
+# Import Libraries
 import numpy as np
-
 
 def print_board(board):
     for row in board:
         print(" | ".join(row))
         print("-" * 9)
 
+
 def check_winner(board):
-    # Check rows and columns
+    """
+    Parameters: 
+        board (array):
+
+    Returns:
+        bool: flag to determine if there is a winner
+    """
+
     for i in range(3):
         if board[i][0] == board[i][1] == board[i][2] != ' ' or \
            board[0][i] == board[1][i] == board[2][i] != ' ':
@@ -22,15 +30,28 @@ def check_winner(board):
     return False
 
 def is_board_full(board):
+    """
+    Parameters:
+        board (array): board indicating game state
+
+    Returns:
+    """
+
     for row in board:
-        if ' ' in row:
+        if '' in row:
             return False
     return True
 
 def tic_tac_toe():
+    """
+    Runs game 
+    """
+
+    # Make Board
     board = np.array([[''] * 3] * 3)
     current_player = 'X'
 
+    # 
     while True:
         print_board(board)
 
