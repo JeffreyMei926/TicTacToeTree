@@ -2,6 +2,82 @@
 # Import Libraries
 import numpy as np
 
+class search_tree:
+    def __init__(self, board, player):
+        self.board = board
+        self.player = player
+        self.children = []
+        self.utility = self.calculate_utility()
+
+    def is_win(self):
+        for i in range(3):
+            if self.board[i][0] == self.board[i][1] == self.board[i][2] == self.player or \
+               self.board[0][i] == self.board[1][i] == self.board[2][i] == self.player:
+                return True
+
+        # Check diagonals
+        if self.board[0][0] == self.board[1][1] == self.board[2][2] == self.player or \
+           self.board[0][2] == self.board[1][1] == self.board[2][0] == self.player:
+            return True
+
+        return False
+
+    def is_loss(self):
+        new_player = 'X' if self.player == 'O' else 'O'
+        for i in range(3):
+            if self.board[i][0] == self.board[i][1] == self.board[i][2] == new_player or \
+               self.board[0][i] == self.board[1][i] == self.board[2][i] == new_player:
+                return True
+
+        # Check diagonals
+        if self.board[0][0] == self.board[1][1] == self.board[2][2] == new_player or \
+           self.board[0][2] == self.board[1][1] == self.board[2][0] == new_player:
+            return True
+
+        return False
+
+    def is_board_full(self):
+        for row in self.board:
+            if '' in row:
+                return False
+        return True
+
+    def calculate_utility(self):
+        if self.is_win(): # win
+            return 1
+        elif self.is_loss():
+            return -1
+        elif self.is_board_full(): # draw
+            return 0
+        pass
+
+    def generate_children(self):
+        for row in range(3):
+            for col in range(3):
+                if self.board[row][col] == '':
+                    new_board = self.board.copy()
+                    new_board[row][col] = self.player
+                    new_player = 'O' if self.player == 'X' else 'X' # enemy token 
+                    child = search_tree(new_board, new_player)
+                    self.children.append(child)
+
+    def print_board(self):
+        print("-" * 9)
+        for row in self.board:
+            print(" | ".join(row))
+            print("-" * 9)
+
+
+def build_search_tree(board, player):
+    root = search_tree(board, player)
+    build_search_tree_recursive(root)
+    return root
+
+def build_search_tree_recursive(node):
+    node.generate_children()
+    for child in node.children:
+        build_search_tree_recursive(child)
+
 def print_board(board):
     print("-" * 9)
     for row in board:
@@ -150,6 +226,16 @@ def shallow_search_tree(board):
     row, cell = find_empty_cell(board)
     return row, col
 
+def evaluate_state(board, row, col, player):
+    new_board = board.copy()
+    new_board[row][col] = player
+
+    if check_winner(new_board):
+        return 1
+    elif is_board_full(new_board):
+        return 0
+    else:
+        evaluate_state(board) 
 
 def is_terminal():
     '''
@@ -161,7 +247,6 @@ def is_terminal():
 
     else if: is_board_full(board)
         return 0
-
 
 def test_board(scenario):
     '''
@@ -189,15 +274,44 @@ def test_board(scenario):
         board[1][0] = 'X'; board[1][1] = ''; board[1][2] = ''; 
         board[2][0] = ''; board[2][1] = ''; board[2][2] = ''
 
+    elif scenario == 3:
+
+        # Imminent Win
+        board[0][0] = 'X'; board[0][1] = 'O'; board[0][2] = ''; 
+        board[1][0] = 'X'; board[1][1] = 'O'; board[1][2] = ''; 
+        board[2][0] = ''; board[2][1] = ''; board[2][2] = ''
+
+
+    elif scenario == 4:
+
+        # Imminent Win
+        board[0][0] = 'X'; board[0][1] = 'O'; board[0][2] = ''; 
+        board[1][0] = 'X'; board[1][1] = 'O'; board[1][2] = ''; 
+        board[2][0] = 'X'; board[2][1] = ''; board[2][2] = ''
+
     # Imminent Draw
     return board
 
 
-
-
-
 if __name__ == "__main__":
     tic_tac_toe(one_player = True)
+
+
+# ========
+# Testing 
+# ========
+board = test_board(3)
+player = 'X'
+node = search_tree(board, player)
+node.calculate_utility()
+
+root = build_search_tree(board, player)
+build_search_tree_recursive(node)
+
+
+for child in root.children:
+    if child.calculate_utility() is not None:
+        print(child.calculate_utility())
 
 
 
